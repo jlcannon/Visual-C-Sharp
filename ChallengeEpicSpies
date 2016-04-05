@@ -1,0 +1,81 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace ChallengeEpicSpies
+{
+    public partial class Default : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!Page.IsPostBack)
+            {
+                endPrevCalendar.SelectedDate = DateTime.Now.Date;
+                startNewCalendar.SelectedDate = endPrevCalendar.SelectedDate.Date.AddDays(14);
+                endNewCalendar.SelectedDate = endPrevCalendar.SelectedDate.Date.AddDays(21);
+            }
+            Page.MaintainScrollPositionOnPostBack = true;
+        }
+
+        protected void assignButton_Click(object sender, EventArgs e)
+        {
+            string spyName = nameTextBox.Text;
+            string assignName = assignmentTextBox.Text;
+
+
+             //if (startNewCalendar.SelectedDate <= endPrevCalendar.SelectedDate.AddDays(15))
+            //{
+            //    resultLabel.Text = "Error there must be 14 days between the end of the previous assignment.";
+            //}
+            ////else 
+            ////{
+            ////    resultLabel.Text = "Your Good!";
+            ////}
+
+
+            if (endNewCalendar.SelectedDate <= startNewCalendar.SelectedDate.AddDays(21))
+            {
+                TimeSpan elapsedDays = endNewCalendar.SelectedDate.Subtract(startNewCalendar.SelectedDate);
+                double userValue = 500;
+                double days = elapsedDays.TotalDays;
+                double sum = userValue * days;
+                resultLabel.Text = String.Format("Assignment of {0} to Project: {1} has been authorized. Budget total is: {2:C}", nameTextBox.Text, assignmentTextBox.Text, sum);
+            }
+
+            //if (endNewCalendar.SelectedDate >= startNewCalendar.SelectedDate.AddDays(22))
+            //{
+            //    resultLabel.Text = "You have exceeded the 21 day limit and will be charged extra.";
+            //}
+            else if (endNewCalendar.SelectedDate > startNewCalendar.SelectedDate.AddDays(21))
+            {
+                TimeSpan elapsedDays = endNewCalendar.SelectedDate.Subtract(startNewCalendar.SelectedDate);
+                double userValue = 500;
+                double days = elapsedDays.TotalDays;
+                double sum = userValue * days + 1000;
+                resultLabel.Text = String.Format("Assignment of {0} to Project: {1} has been authorized. Budget total is: {2:C}", nameTextBox.Text, assignmentTextBox.Text, sum);
+            }
+            else
+            {
+              
+            }
+
+            TimeSpan timeBetweenAssignments = startNewCalendar.SelectedDate.Subtract(endPrevCalendar.SelectedDate);
+            if (timeBetweenAssignments.TotalDays < 14)
+            {
+                resultLabel.Text = "Error: Must allow atleast two weeks between " +
+                    "previous assignmnet and new assignment.";
+
+                DateTime earliestNewAssignmentDate = endPrevCalendar.SelectedDate.AddDays(14);
+
+                startNewCalendar.SelectedDate = earliestNewAssignmentDate;
+                startNewCalendar.VisibleDate = earliestNewAssignmentDate;
+            }
+
+            
+
+        }
+    }
+}
